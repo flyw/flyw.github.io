@@ -24,6 +24,25 @@
     <meta property="twitter:title" content="Yuan | High-Performance Engineering Portfolio">
     <meta property="twitter:description" content="Bridging AI and Hardware with Extreme Performance. Specialist in AI Speech Synthesis and Android System Optimization.">
 
+    <!-- Structured Data (JSON-LD) for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org/",
+      "@type": "Person",
+      "name": "Yuan",
+      "url": "https://flyw.github.io/",
+      "jobTitle": "High-Performance Software Engineer",
+      "knowsAbout": ["AI Speech Synthesis", "Android NDK", "C++ Optimization", "JNI", "FastAPI", "Rockchip RGA"],
+      "sameAs": [
+        "https://github.com/flyw"
+      ],
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://flyw.github.io/"
+      }
+    }
+    </script>
+
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -60,6 +79,25 @@
                 <div class="about-content">
                     <p>I am a software engineer driven by the pursuit of <strong>computational efficiency</strong>. In an era of bloated software, I focus on the "last mile" of performance—where high-level algorithms meet low-level silicon.</p>
                     <p>My work spans from <strong>optimizing Large Language Models (LLMs)</strong> for real-time speech interaction to <strong>writing C++ JNI wrappers</strong> that squeeze every drop of performance out of dedicated hardware like Rockchip's RGA3 cores. I believe that true innovation happens when you understand the entire stack, from the Python application layer down to the kernel memory management.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Solutions/Breakthroughs Section for SEO -->
+        <section class="breakthroughs">
+            <div class="container">
+                <h2 class="section-title">Case Studies: Performance Solved</h2>
+                <div class="breakthrough-grid">
+                    <div class="breakthrough-item">
+                        <span class="breakthrough-topic">LLM OPTIMIZATION</span>
+                        <h4>Solving the 2s Latency Gap in AI Speech</h4>
+                        <p>Through specialized <strong>monkey-patching of the model forward pass</strong> and replacing SSE with raw PCM streaming, I achieved a <strong>Time to First Byte (TTFB) of ~380ms</strong>. This makes real-time human-AI interaction truly conversational.</p>
+                    </div>
+                    <div class="breakthrough-item">
+                        <span class="breakthrough-topic">ANDROID SYSTEMS</span>
+                        <h4>Breaking the 4GB Memory Barrier for RGA2</h4>
+                        <p>Faced with kernel crashes on 16GB RAM devices, I engineered a <strong>JNI core-forcing layer</strong> that bypasses legacy RGA2 limitations by strictly scheduling tasks to <strong>RGA3 Core0/Core1</strong>.</p>
+                    </div>
                 </div>
             </div>
         </section>
