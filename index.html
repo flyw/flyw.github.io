@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Meta Tags -->
+    <title>Yuan | High-Performance Engineer | AI & Android Systems</title>
+    <meta name="description" content="Portfolio of Yuan, a High-Performance Engineer specializing in AI Speech Synthesis (TTS), Android low-level optimization, C++, and JNI. Expert in ultra-low latency streaming.">
+    <meta name="keywords" content="Yuan, High-Performance Engineer, AI, TTS, Qwen3-TTS, Android NDK, librga, Rockchip, C++, Kotlin, JNI, Performance Optimization, Streaming Server">
+    <meta name="author" content="Yuan">
+    <link rel="canonical" href="https://flyw.github.io/">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://flyw.github.io/">
+    <meta property="og:title" content="Yuan | High-Performance Engineering Portfolio">
+    <meta property="og:description" content="Bridging AI and Hardware with Extreme Performance. Specialist in AI Speech Synthesis and Android System Optimization.">
+    <meta property="og:image" content="https://flyw.github.io/og-image.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://flyw.github.io/">
+    <meta property="twitter:title" content="Yuan | High-Performance Engineering Portfolio">
+    <meta property="twitter:description" content="Bridging AI and Hardware with Extreme Performance. Specialist in AI Speech Synthesis and Android System Optimization.">
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <div class="logo">YUAN.DEV</div>
+            <ul class="nav-links">
+                <li><a href="#about">About</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#skills">Expertise</a></li>
+                <li><a href="https://github.com/flyw" target="_blank" rel="noopener">GitHub</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main>
+        <!-- Hero Section -->
+        <header class="hero">
+            <div class="container">
+                <h1>Performance-First <br><span class="highlight">Engineering</span></h1>
+                <p class="subtitle">Bridging <span class="white">Artificial Intelligence</span> and <span class="white">Hardware Acceleration</span> with zero-compromise latency optimization.</p>
+                <div class="cta-group">
+                    <a href="#projects" class="btn primary">Explore Engineering Lab</a>
+                    <a href="#about" class="btn secondary">Read Philosophy</a>
+                </div>
+            </div>
+        </header>
+
+        <!-- About Section (New for SEO) -->
+        <section id="about" class="about">
+            <div class="container">
+                <h2 class="section-title">Engineering Philosophy</h2>
+                <div class="about-content">
+                    <p>I am a software engineer driven by the pursuit of <strong>computational efficiency</strong>. In an era of bloated software, I focus on the "last mile" of performance—where high-level algorithms meet low-level silicon.</p>
+                    <p>My work spans from <strong>optimizing Large Language Models (LLMs)</strong> for real-time speech interaction to <strong>writing C++ JNI wrappers</strong> that squeeze every drop of performance out of dedicated hardware like Rockchip's RGA3 cores. I believe that true innovation happens when you understand the entire stack, from the Python application layer down to the kernel memory management.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects" class="projects">
+            <div class="container">
+                <h2 class="section-title">Core Contributions</h2>
+                <div class="project-grid">
+                    <!-- Project 1: Qwen3-TTS -->
+                    <article class="project-card">
+                        <div class="project-tag">AI / Neural Speech</div>
+                        <h3>Qwen3-TTS Streaming Server</h3>
+                        <p class="project-desc">A production-ready FastAPI wrapper for Qwen3-TTS, architected for ultra-low latency in real-time human-computer interaction scenarios.</p>
+                        <ul class="highlights">
+                            <li><i class="fas fa-bolt"></i> <strong>Extreme Latency Reduction</strong>: Reduced Time to First Byte (TTFB) to <strong>~380ms</strong> via specialized model-path monkey-patching.</li>
+                            <li><i class="fas fa-microchip"></i> <strong>Binary-First Protocol</strong>: Optimized throughput by <strong>33%</strong> using raw PCM 16-bit binary streaming, bypassing SSE/Base64 overhead.</li>
+                            <li><i class="fas fa-shield-alt"></i> <strong>Zero-Hallucination Cloning</strong>: Integrated X-Vector-only mode to eliminate prompt leakage during voice cloning.</li>
+                        </ul>
+                        <div class="tech-stack">
+                            <span>Python 3.12</span><span>FastAPI</span><span>PyTorch</span><span>FlashAttention 2</span><span>Web Audio API</span>
+                        </div>
+                        <a href="https://github.com/flyw/Qwen3-TTS-Streaming-Server" class="link" target="_blank" rel="noopener">Analyze Implementation <i class="fas fa-arrow-right"></i></a>
+                    </article>
+
+                    <!-- Project 2: librga-android -->
+                    <article class="project-card">
+                        <div class="project-tag">Android / Systems</div>
+                        <h3>librga-android (RGA3 Optimized)</h3>
+                        <p class="project-desc">A high-performance Kotlin/C++ wrapper for Rockchip's Raster Graphic Acceleration (RGA) im2d API, tailored for modern SoCs.</p>
+                        <ul class="highlights">
+                            <li><i class="fas fa-memory"></i> <strong>Memory Architecture</strong>: Successfully bypassed the 4GB addressing limit of RGA2 hardware by implementing RGA3-exclusive scheduling.</li>
+                            <li><i class="fas fa-cogs"></i> <strong>Hardware Forcing</strong>: Engineered a JNI layer that forces Core0/Core1 utilization, ensuring stability on devices with up to 16GB RAM.</li>
+                            <li><i class="fas fa-sync"></i> <strong>Batch Processing</strong>: Developed a Job/Task system for efficient hardware-accelerated image pipelines (Resize, Crop, Rotate).</li>
+                        </ul>
+                        <div class="tech-stack">
+                            <span>C++17</span><span>Kotlin</span><span>JNI</span><span>Android NDK</span><span>Rockchip im2d</span>
+                        </div>
+                        <a href="https://github.com/flyw/librga-android" class="link" target="_blank" rel="noopener">View System Design <i class="fas fa-arrow-right"></i></a>
+                    </article>
+
+                    <!-- Project 3: Android Boilerplate -->
+                    <article class="project-card">
+                        <div class="project-tag">Android / Architecture</div>
+                        <h3>Android Modular Assembly Boilerplate</h3>
+                        <p class="project-desc">A flexible scaffolding system that utilizes a <strong>"Settings Assembly"</strong> pattern to dynamically compose Android applications from independent modules.</p>
+                        <ul class="highlights">
+                            <li><i class="fas fa-puzzle-piece"></i> <strong>Settings-Driven Assembly</strong>: Leverages Gradle <code>settings.gradle</code> to hot-plug functional modules from external directories, enabling extreme code reuse.</li>
+                            <li><i class="fas fa-link"></i> <strong>Unified Initialization Chain</strong>: Implements a standardized <code>ModuleInitializer</code> using <strong>AndroidX App Startup</strong> for automated, dependency-aware module booting.</li>
+                            <li><i class="fas fa-plug"></i> <strong>Dynamic UI Injection</strong>: Designed for modular UI components (e.g., <code>SettingButton</code>) that can be appended to host activities without hard-coding layout dependencies.</li>
+                        </ul>
+                        <div class="tech-stack">
+                            <span>Kotlin</span><span>Gradle Assembly</span><span>AndroidX Startup</span><span>Modular Design</span>
+                        </div>
+                        <a href="https://github.com/flyw/android-boilerplate" class="link" target="_blank" rel="noopener">Explore Assembly Pattern <i class="fas fa-arrow-right"></i></a>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Expertise Section -->
+        <section id="skills" class="skills">
+            <div class="container">
+                <h2 class="section-title">Technical Expertise</h2>
+                <div class="skills-wrapper">
+                    <div class="skill-category">
+                        <h4>System Languages</h4>
+                        <div class="skill-tags">
+                            <span>C++ (Modern)</span><span>Kotlin</span><span>Python (Advanced)</span><span>Java</span><span>Go</span>
+                        </div>
+                    </div>
+                    <div class="skill-category">
+                        <h4>AI & Deep Learning</h4>
+                        <div class="skill-tags">
+                            <span>TTS / ASR</span><span>LLM Serving</span><span>PyTorch Optimization</span><span>TensorRT</span><span>Model Quantization</span>
+                        </div>
+                    </div>
+                    <div class="skill-category">
+                        <h4>Android & Embedded</h4>
+                        <div class="skill-tags">
+                            <span>NDK Development</span><span>JNI Bridging</span><span>Memory Management</span><span>Hardware Acceleration</span><span>V4L2</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2026 Yuan. All Rights Reserved. | <a href="https://github.com/flyw" target="_blank" rel="noopener">GitHub</a></p>
+                <p class="footer-note">Optimized for humans and search engines.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
