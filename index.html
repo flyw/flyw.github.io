@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- SEO Meta Tags -->
-    <title>Yuan | High-Performance Engineer | AI Speech & Android Systems</title>
-    <meta name="description" content="Portfolio of Yuan, a High-Performance Engineer specializing in AI Speech (TTS/ASR), Phonetic AEC, Android NDK, and JNI. Expert in ultra-low latency streaming and hardware acceleration.">
-    <meta name="keywords" content="Yuan, High-Performance Engineer, AI, TTS, ASR, Qwen3-ASR, Phonetic AEC, Android NDK, librga, Rockchip, C++, JNI, vLLM, WebSocket Streaming">
+    <title>Yuan | High-Performance Engineer | AI Speech & Multi-modal Systems</title>
+    <meta name="description" content="Portfolio of Yuan, a High-Performance Engineer specializing in Visual-Aided AI Speech (TTS/ASR), MVDR Beamforming, Android NDK, and JNI. Expert in multi-channel audio processing and hardware acceleration.">
+    <meta name="keywords" content="Yuan, VisuBeam, High-Performance Engineer, AI, TTS, ASR, MVDR, Beamforming, DOA, Phonetic AEC, Android NDK, librga, C++, JNI, vLLM, WebSocket Streaming">
     <meta name="author" content="Yuan">
     <meta name="google-site-verification" content="jALZ9V8TMXFWdDm4f9XYhHH-HGCy3JFZUF-nApDDjgQ" />
     <link rel="canonical" href="https://flyw.github.io/">
@@ -15,15 +15,15 @@
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://flyw.github.io/">
-    <meta property="og:title" content="Yuan | High-Performance AI & System Engineering">
-    <meta property="og:description" content="Bridging AI and Hardware with Extreme Performance. Specialist in Streaming ASR/TTS and Android System Optimization.">
+    <meta property="og:title" content="Yuan | High-Performance AI & Multi-modal Engineering">
+    <meta property="og:description" content="Bridging AI, Computer Vision, and Hardware with Extreme Performance. Specialist in MVDR Beamforming and Android System Optimization.">
     <meta property="og:image" content="https://flyw.github.io/og-image.png">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://flyw.github.io/">
-    <meta property="twitter:title" content="Yuan | High-Performance AI & System Engineering">
-    <meta property="twitter:description" content="Bridging AI and Hardware with Extreme Performance. Specialist in Streaming ASR/TTS and Android System Optimization.">
+    <meta property="twitter:title" content="Yuan | High-Performance AI & Multi-modal Engineering">
+    <meta property="twitter:description" content="Bridging AI, Computer Vision, and Hardware with Extreme Performance. Specialist in MVDR Beamforming and Android System Optimization.">
 
     <!-- Structured Data (JSON-LD) for SEO -->
     <script type="application/ld+json">
@@ -33,7 +33,7 @@
       "name": "Yuan",
       "url": "https://flyw.github.io/",
       "jobTitle": "High-Performance Software Engineer",
-      "knowsAbout": ["AI Speech Synthesis (TTS)", "Streaming ASR", "Phonetic AEC", "Android NDK", "C++ Optimization", "JNI", "vLLM", "Rockchip RGA"],
+      "knowsAbout": ["MVDR Beamforming", "Visual-Aided DOA", "AI Speech Synthesis (TTS)", "Streaming ASR", "Android NDK", "C++ Optimization", "JNI", "vLLM"],
       "sameAs": [
         "https://github.com/flyw"
       ],
@@ -92,7 +92,12 @@
                     <div class="breakthrough-item">
                         <span class="breakthrough-topic">SPEECH RECOGNITION (ASR)</span>
                         <h4>Eliminating Homophone Errors in ASR</h4>
-                        <p>Implemented a <strong>Phonetic AEC (Automatic Error Correction)</strong> layer using pinyin-based fuzzy matching. This ensures industrial-grade precision for technical terms (e.g., brand names) by correcting phonetic misidentifications in <strong>real-time streaming</strong>.</p>
+                        <p>Implemented a <strong>Phonetic AEC (Automatic Error Correction)</strong> layer using pinyin-based fuzzy matching. This ensures industrial-grade precision for technical terms by correcting phonetic misidentifications in <strong>real-time streaming</strong>.</p>
+                    </div>
+                    <div class="breakthrough-item">
+                        <span class="breakthrough-topic">MULTI-MODAL FUSION</span>
+                        <h4>Solving the "Cocktail Party Problem"</h4>
+                        <p>Developed a cross-modal engine that uses <strong>Visual Tracking Coordinates</strong> to guide an <strong>MVDR Beamformer</strong>. This enables precise extraction of target voices from multi-channel arrays by "looking" at the speaker, effectively suppressing spatial interference.</p>
                     </div>
                     <div class="breakthrough-item">
                         <span class="breakthrough-topic">LLM OPTIMIZATION (TTS)</span>
@@ -108,6 +113,22 @@
             <div class="container">
                 <h2 class="section-title">Core Contributions</h2>
                 <div class="project-grid">
+                    <!-- Project 0: VisuBeam -->
+                    <article class="project-card">
+                        <div class="project-tag">AI / Multi-modal Fusion</div>
+                        <h3>VisuBeam: Visual-Aided Audio Framework</h3>
+                        <p class="project-desc">A high-performance real-time audio processing framework that leverages visual guidance for precision beamforming and speech enhancement.</p>
+                        <ul class="highlights">
+                            <li><i class="fas fa-eye"></i> <strong>Visual-Aided DOA</strong>: Uses external tracking data to guide SRP-PHAT localization, solving the "Cocktail Party Problem" in multi-speaker environments.</li>
+                            <li><i class="fas fa-filter"></i> <strong>MVDR Beamformer</strong>: Implemented Minimum Variance Distortionless Response filtering on GPU to create a focused audio "beam" toward the speaker.</li>
+                            <li><i class="fas fa-exchange-alt"></i> <strong>Shared Circular Buffer</strong>: Decoupled producer-consumer architecture for zero-drop audio capture and high-concurrency neural enhancement.</li>
+                        </ul>
+                        <div class="tech-stack">
+                            <span>Python 3.11</span><span>PyTorch</span><span>TensorFlow</span><span>FastAPI</span><span>WebRTC APM</span>
+                        </div>
+                        <a href="https://github.com/flyw/VisuBeam" class="link" target="_blank" rel="noopener">Analyze Fusion Pipeline <i class="fas fa-arrow-right"></i></a>
+                    </article>
+
                     <!-- Project 1: Qwen3-ASR -->
                     <article class="project-card">
                         <div class="project-tag">AI / Speech Recognition</div>
