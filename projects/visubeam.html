@@ -185,11 +185,25 @@
             <div class="step-card">
                 <div class="step-num">3</div>
                 <h3>Phase 3: The Beamformer Stack (MVDR)</h3>
-                <p>The core of VisuBeam's extraction capability lies in its <strong>Spatial Filter</strong>, which mathematically synthesizes a directional beam towards the target speaker.</p>
+                <p>The core of VisuBeam's extraction capability lies in its <strong>Spatial Filter</strong>, which mathematically synthesizes a directional beam towards the target speaker while nulling out interference from all other directions. This is where the "virtual spotlight" metaphor becomes mathematical reality.</p>
 
                 <div class="tech-subsection">
-                    <h4><i class="fas fa-crosshairs"></i> MVDR Beamforming (Souden Algorithm)</h4>
-                    <p>VisuBeam utilizes the <strong>Minimum Variance Distortionless Response (MVDR)</strong> algorithm. By estimating the Noise Covariance Matrix from MCRA and the Steering Vector from the target angle, the filter minimizes energy from all directions <em>except</em> the target azimuth.</p>
+                    <h4><i class="fas fa-crosshairs"></i> MVDR Beamforming: Mathematical Foundation</h4>
+                    <p>VisuBeam utilizes the <strong>Minimum Variance Distortionless Response (MVDR)</strong> algorithm, also known as the Capon beamformer. The beamformer weights are computed as:</p>
+                    <div class="code-snippet" style="text-align: center; font-size: 1rem;">
+<span class="code-func">w</span> = <span class="code-func">R⁻¹</span> · <span class="code-func">a</span>(θ) / (<span class="code-func">a</span>(θ)<sup>H</sup> · <span class="code-func">R⁻¹</span> · <span class="code-func">a</span>(θ))
+                    </div>
+                    <p>Where <strong>R</strong> is the noise covariance matrix (estimated by MCRA), <strong>a(θ)</strong> is the steering vector derived from the target angle and microphone geometry, and <sup>H</sup> denotes the Hermitian transpose. The filter minimizes total output variance while maintaining a distortionless response in the target direction.</p>
+                </div>
+
+                <div class="tech-subsection">
+                    <h4><i class="fas fa-exchange-alt"></i> Dual Algorithm Selection: Capon vs. Souden</h4>
+                    <p>VisuBeam implements <strong>two MVDR variants</strong> and dynamically selects between them based on signal stability:</p>
+                    <ul style="color: #aaa; font-size: 0.95rem; padding-left: 20px;">
+                        <li><strong>Standard MVDR (Capon):</strong> The classical formulation, optimal for stationary noise environments.</li>
+                        <li><strong>MVDR-Souden:</strong> An enhanced variant that uses separate PSD (Power Spectral Density) matrices for speech and noise, updated via <strong>Exponential Moving Averages (EMA)</strong>. This provides superior performance in non-stationary, multi-speaker scenarios.</li>
+                    </ul>
+                    <p>The steering vector calculation accounts for the precise physical microphone positions defined in the <code>SystemConfiguration</code>, enabling accurate beam steering for both linear 4-mic arrays and circular 8-mic configurations.</p>
                 </div>
 
                 <div class="visual-comparison">
@@ -204,8 +218,21 @@
                 </div>
 
                 <div class="tech-subsection">
-                    <h4><i class="fas fa-redo"></i> Inertial Hold Mechanism</h4>
-                    <p>To handle brief tracking dropouts, an <strong>Inertial Spatial Hold</strong> maintains the beamformer's direction for a configurable duration (default 128ms) after a signal loss, ensuring continuous audio delivery during rapid speaker movement.</p>
+                    <h4><i class="fas fa-redo"></i> Inertial Hold & Smooth Tracking Mechanism</h4>
+                    <p>In real-world environments, DOA estimates can be noisy — a speaker turning their head, brief occlusions, or transient reflections can cause the detected angle to jitter. If the beamformer responded instantaneously to every fluctuation, the output audio would suffer from audible artifacts.</p>
+                    <p>VisuBeam implements an <strong>Inertial Spatial Hold</strong> state machine with four distinct modes:</p>
+                    <ul style="color: #aaa; font-size: 0.95rem; padding-left: 20px;">
+                        <li><strong>Target DOA:</strong> Detected angle is within tolerance of the current target → <code>miss_count</code> resets to 0, beam tracks smoothly.</li>
+                        <li><strong>Background Noise:</strong> No source detected → <code>miss_count</code> increments each frame.</li>
+                        <li><strong>Inertial Hold:</strong> A new source is detected but <code>miss_count &lt; inertial_hold_frames</code> (default: 4 frames ≈ 128ms) → the system holds the previous angle to prevent beam jitter during rapid movement.</li>
+                        <li><strong>Interference DOA:</strong> <code>miss_count</code> exceeds the threshold → the target angle updates to the new direction.</li>
+                    </ul>
+                    <p>Angle updates are applied at every processing frame (~32ms intervals). A <strong>timeout protection</strong> mechanism holds the last known angle if no update is received within 10 seconds, preventing the beam from drifting into noise during extended silence periods.</p>
+                </div>
+
+                <div class="tech-subsection">
+                    <h4><i class="fas fa-eye"></i> Visual Guidance Fusion</h4>
+                    <p>What truly distinguishes VisuBeam from traditional audio-only DOA systems is its <strong>cross-modal visual-audio fusion</strong>. The beamformer's target angle can be driven by external visual tracking data (e.g., camera-based person tracking via the REST API). When visual coordinates are available, they take priority over acoustic DOA estimates, dramatically improving spatial selectivity in challenging acoustic environments. The SRP-PHAT pipeline serves as a robust fallback when the visual feed is unavailable.</p>
                 </div>
             </div>
 

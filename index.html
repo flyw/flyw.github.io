@@ -53,8 +53,9 @@
             <div class="logo">YUAN WANG</div>
             <ul class="nav-links">
                 <li><a href="#about">About</a></li>
-                <li><a href="#projects">Projects</a></li>
-                <li><a href="#skills">Expertise</a></li>
+                <li><a href="#audio">Audio</a></li>
+                <li><a href="#ai">AI Speech</a></li>
+                <li><a href="#architecture">Architecture</a></li>
                 <li><a href="https://github.com/flyw" target="_blank" rel="noopener">GitHub</a></li>
             </ul>
         </div>
@@ -114,57 +115,62 @@
             </div>
         </section>
 
-        <!-- Projects Section -->
-        <section id="projects" class="projects">
+        <!-- Module 1: Audio Engineering -->
+        <section id="audio" class="projects">
             <div class="container">
-                <h2 class="section-title">Core Contributions</h2>
-                <div class="project-grid">
-                    <!-- Project 0: VisuBeam -->
+                <h2 class="section-title">Audio Engineering Lab</h2>
+                <p class="section-subtitle">Real-time spatial filtering and multi-channel signal processing.</p>
+                <div class="project-grid single-col">
                     <article class="project-card">
-                        <div class="project-tag">AI / Cross-modal Fusion</div>
+                        <div class="project-tag">Flagship / Audio Fusion</div>
                         <h3>VisuBeam: Cross-modal Audio Engine</h3>
                         <p class="project-desc">A high-performance real-time audio framework that fuses visual guidance with MVDR beamforming to "look and listen" with extreme spatial precision.</p>
                         <ul class="highlights">
-                            <li><i class="fas fa-microchip"></i> <strong>Shared Circular Buffer</strong>: Implemented a thread-safe asynchronous buffer for zero-drop capture and multi-consumer real-time processing.</li>
-                            <li><i class="fas fa-shield-alt"></i> <strong>AEC & Self-Noise Removal</strong>: Integrated WebRTC APM to strip out device playback (Echo Cancellation) and stabilize the signal before beamforming.</li>
-                            <li><i class="fas fa-tachometer-alt"></i> <strong>Inertial Tracking</strong>: Robust spatial steering with 45°→70° smooth tracking and intelligent hold mechanism during brief signal gaps.</li>
+                            <li><i class="fas fa-microchip"></i> <strong>Shared Circular Buffer</strong>: Thread-safe asynchronous buffer for zero-drop capture and multi-consumer processing.</li>
+                            <li><i class="fas fa-shield-alt"></i> <strong>AEC & Self-Noise Removal</strong>: Integrated WebRTC APM to strip out device playback and stabilize the signal before beamforming.</li>
+                            <li><i class="fas fa-tachometer-alt"></i> <strong>Inertial Tracking</strong>: Robust spatial steering with 45°→70° smooth tracking and intelligent hold mechanism.</li>
                         </ul>
                         <div class="tech-stack">
-                            <span>Python 3.11</span><span>PyTorch</span><span>TensorFlow</span><span>NARA-WPE</span><span>WebRTC APM</span>
+                            <span>Python 3.11</span><span>PyTorch</span><span>NARA-WPE</span><span>WebRTC APM</span>
                         </div>
                         <div class="project-actions">
                             <a href="projects/visubeam.html" class="btn primary btn-sm">Deep Dive <i class="fas fa-file-alt"></i></a>
                             <a href="https://github.com/flyw/VisuBeam" class="btn secondary btn-sm" target="_blank" rel="noopener">GitHub <i class="fab fa-github"></i></a>
                         </div>
                     </article>
+                </div>
+            </div>
+        </section>
 
-                    <!-- Project 1: Qwen3-ASR -->
+        <!-- Module 2: AI & Model Applications -->
+        <section id="ai" class="projects alt-bg">
+            <div class="container">
+                <h2 class="section-title">AI Speech & Model Applications</h2>
+                <p class="section-subtitle">Optimizing LLMs and Speech models for production-grade latency and precision.</p>
+                <div class="project-grid">
                     <article class="project-card">
-                        <div class="project-tag">AI / Speech Recognition</div>
+                        <div class="project-tag">Speech Recognition</div>
                         <h3>Qwen3-ASR Phonetic Hotword Server</h3>
-                        <p class="project-desc">A professional streaming ASR solution with <strong>Zero-Shot Phonetic Hotword Correction</strong> for industrial-grade precision.</p>
+                        <p class="project-desc">Streaming ASR with <strong>Zero-Shot Phonetic Correction</strong> layer using pinyin-based fuzzy matching to force-correct homophones.</p>
                         <ul class="highlights">
-                            <li><i class="fas fa-magic"></i> <strong>Phonetic AEC</strong>: Real-time Pinyin-based fuzzy matching to force-correct homophone errors in technical entities.</li>
-                            <li><i class="fas fa-stream"></i> <strong>WebSocket Streaming</strong>: Native support for 64ms audio chunk processing with <strong>vLLM-accelerated</strong> inference.</li>
-                            <li><i class="fas fa-memory"></i> <strong>VRAM Optimized</strong>: Engineered for consumer GPUs, supporting optimized sequence lengths on 8GB/12GB cards.</li>
+                            <li><i class="fas fa-magic"></i> <strong>Phonetic AEC</strong>: Real-time correction of technical terms via phonetic misidentification analysis.</li>
+                            <li><i class="fas fa-stream"></i> <strong>vLLM-accelerated</strong>: Native 64ms audio chunk processing with optimized inference sequence lengths.</li>
                         </ul>
                         <div class="tech-stack">
-                            <span>vLLM</span><span>FastAPI</span><span>WebSocket</span><span>Pypinyin</span><span>PyTorch</span>
+                            <span>vLLM</span><span>FastAPI</span><span>WebSocket</span><span>Pypinyin</span>
                         </div>
                         <div class="project-actions">
                             <a href="https://github.com/flyw/Qwen3-ASR-Phonetic-Hotword-Server" class="btn primary btn-sm" target="_blank" rel="noopener">Analyze Lab <i class="fas fa-microchip"></i></a>
                         </div>
                     </article>
 
-                    <!-- Project 2: Qwen3-TTS -->
                     <article class="project-card">
-                        <div class="project-tag">AI / Neural Speech</div>
+                        <div class="project-tag">Neural Speech</div>
                         <h3>Qwen3-TTS Streaming Server</h3>
-                        <p class="project-desc">High-performance TTS wrapper focused on ultra-low latency audio delivery for conversational AI.</p>
+                        <p class="project-desc">High-performance TTS wrapper focused on ultra-low latency (TTFB ~380ms) for conversational AI interaction.</p>
                         <ul class="highlights">
-                            <li><i class="fas fa-bolt"></i> <strong>TTFB ~380ms</strong>: Instant audio via specialized model-path monkey-patching.</li>
-                            <li><i class="fas fa-microchip"></i> <strong>33% Bandwidth Reduction</strong>: Optimized raw PCM 16-bit binary delivery vs JSON/SSE.</li>
-                            <li><i class="fas fa-shield-alt"></i> <strong>X-Vector Mode</strong>: Eliminated prompt leakage and hallucinations in voice cloning.</li>
+                            <li><i class="fas fa-bolt"></i> <strong>Monkey-patching Optimization</strong>: Specialized model-path injection for instant audio delivery.</li>
+                            <li><i class="fas fa-microchip"></i> <strong>Raw Binary Delivery</strong>: Optimized 16-bit PCM binary streaming vs standard JSON/SSE.</li>
                         </ul>
                         <div class="tech-stack">
                             <span>Python 3.12</span><span>FastAPI</span><span>PyTorch</span><span>Web Audio API</span>
@@ -173,40 +179,77 @@
                             <a href="https://github.com/flyw/Qwen3-TTS-Streaming-Server" class="btn primary btn-sm" target="_blank" rel="noopener">Analyze TTS <i class="fas fa-bolt"></i></a>
                         </div>
                     </article>
+                </div>
+            </div>
+        </section>
 
-                    <!-- Project 2: librga-android -->
+        <!-- Module 3: Software Architecture -->
+        <section id="architecture" class="projects">
+            <div class="container">
+                <h2 class="section-title">Systems & Software Architecture</h2>
+                <p class="section-subtitle">Bridging application logic with hardware efficiency and modular design patterns.</p>
+                <div class="project-grid">
                     <article class="project-card">
                         <div class="project-tag">Android / Systems</div>
                         <h3>librga-android (RGA3 Optimized)</h3>
-                        <p class="project-desc">A high-performance Kotlin/C++ wrapper for Rockchip's Raster Graphic Acceleration (RGA) im2d API, tailored for modern SoCs.</p>
+                        <p class="project-desc">A high-performance Kotlin/C++ wrapper for Rockchip's Raster Graphic Acceleration, bypassing 4GB addressing limits.</p>
                         <ul class="highlights">
-                            <li><i class="fas fa-memory"></i> <strong>Memory Architecture</strong>: Successfully bypassed the 4GB addressing limit of RGA2 hardware by implementing RGA3-exclusive scheduling.</li>
-                            <li><i class="fas fa-cogs"></i> <strong>Hardware Forcing</strong>: Engineered a JNI layer that forces Core0/Core1 utilization, ensuring stability on devices with up to 16GB RAM.</li>
-                            <li><i class="fas fa-sync"></i> <strong>Batch Processing</strong>: Developed a Job/Task system for efficient hardware-accelerated image pipelines (Resize, Crop, Rotate).</li>
+                            <li><i class="fas fa-memory"></i> <strong>Memory Architecture</strong>: Implementing RGA3-exclusive scheduling for large-RAM stability.</li>
+                            <li><i class="fas fa-cogs"></i> <strong>JNI Hardware Forcing</strong>: Engineered a layer that forces multi-core utilization on modern SoCs.</li>
                         </ul>
                         <div class="tech-stack">
-                            <span>C++17</span><span>Kotlin</span><span>JNI</span><span>Android NDK</span><span>Rockchip im2d</span>
+                            <span>C++17</span><span>Kotlin</span><span>JNI</span><span>Rockchip im2d</span>
                         </div>
                         <div class="project-actions">
                             <a href="https://github.com/flyw/librga-android" class="btn primary btn-sm" target="_blank" rel="noopener">View Architecture <i class="fas fa-cogs"></i></a>
                         </div>
                     </article>
 
-                    <!-- Project 3: Android Boilerplate -->
                     <article class="project-card">
-                        <div class="project-tag">Android / Architecture</div>
-                        <h3>Android Modular Assembly Boilerplate</h3>
-                        <p class="project-desc">A flexible scaffolding system that utilizes a <strong>"Settings Assembly"</strong> pattern to dynamically compose Android applications from independent modules.</p>
+                        <div class="project-tag">Architecture Pattern</div>
+                        <h3>Modular Assembly Boilerplate</h3>
+                        <p class="project-desc">A dynamic scaffolding system using a <strong>"Settings Assembly"</strong> pattern to compose applications via Gradle.</p>
                         <ul class="highlights">
-                            <li><i class="fas fa-puzzle-piece"></i> <strong>Settings-Driven Assembly</strong>: Leverages Gradle <code>settings.gradle</code> to hot-plug functional modules from external directories, enabling extreme code reuse.</li>
-                            <li><i class="fas fa-link"></i> <strong>Unified Initialization Chain</strong>: Implements a standardized <code>ModuleInitializer</code> using <strong>AndroidX App Startup</strong> for automated, dependency-aware module booting.</li>
-                            <li><i class="fas fa-plug"></i> <strong>Dynamic UI Injection</strong>: Designed for modular UI components (e.g., <code>SettingButton</code>) that can be appended to host activities without hard-coding layout dependencies.</li>
+                            <li><i class="fas fa-puzzle-piece"></i> <strong>Settings-Driven</strong>: hot-plug functional modules from external directories.</li>
+                            <li><i class="fas fa-link"></i> <strong>AndroidX Startup</strong>: dependency-aware, automated module initialization chain.</li>
                         </ul>
                         <div class="tech-stack">
-                            <span>Kotlin</span><span>Gradle Assembly</span><span>AndroidX Startup</span><span>Modular Design</span>
+                            <span>Kotlin</span><span>Gradle Assembly</span><span>AndroidX Startup</span>
                         </div>
                         <div class="project-actions">
                             <a href="https://github.com/flyw/android-boilerplate" class="btn primary btn-sm" target="_blank" rel="noopener">Explore Assembly <i class="fas fa-puzzle-piece"></i></a>
+                        </div>
+                    </article>
+
+                    <article class="project-card">
+                        <div class="project-tag">Web Architecture</div>
+                        <h3>TB-Framework (PHP MVC)</h3>
+                        <p class="project-desc">A minimalist PHP MVC framework designed for maximum transparency and zero-dependency routing.</p>
+                        <ul class="highlights">
+                            <li><i class="fas fa-project-diagram"></i> <strong>Clean MVC</strong>: Strict separation of concerns without the bloat of modern heavy engines.</li>
+                            <li><i class="fas fa-code"></i> <strong>Routing Logic</strong>: Hand-crafted request dispatcher for ultra-fast execution.</li>
+                        </ul>
+                        <div class="tech-stack">
+                            <span>PHP 8.x</span><span>MVC Pattern</span><span>Clean Code</span>
+                        </div>
+                        <div class="project-actions">
+                            <a href="https://github.com/flyw/tb-framework" class="btn primary btn-sm" target="_blank" rel="noopener">View MVC Logic <i class="fas fa-code"></i></a>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Module 4: Others -->
+        <section id="other" class="projects alt-bg">
+            <div class="container">
+                <h2 class="section-title">Open Source & Experimental</h2>
+                <div class="project-grid">
+                    <article class="project-card compact">
+                        <h3>weapp-fontawesome-component</h3>
+                        <p>Font Awesome 5/6 icon support for WeChat Mini-programs.</p>
+                        <div class="project-actions">
+                            <a href="https://github.com/flyw/weapp-fontawesome-component" class="link" target="_blank" rel="noopener">GitHub <i class="fas fa-external-link-alt"></i></a>
                         </div>
                     </article>
                 </div>

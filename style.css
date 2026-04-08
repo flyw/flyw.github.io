@@ -208,6 +208,32 @@ nav a:hover {
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
 }
 
+.projects.alt-bg {
+    background-color: #0d1117;
+}
+
+.section-subtitle {
+    text-align: center;
+    color: #888;
+    margin-top: -20px;
+    margin-bottom: 40px;
+    font-size: 1.1rem;
+}
+
+.project-grid.single-col {
+    grid-template-columns: 1fr;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.project-card.compact {
+    padding: 30px;
+}
+
+.project-card.compact h3 {
+    font-size: 1.4rem;
+}
+
 .project-tag {
     font-size: 0.8rem;
     text-transform: uppercase;
