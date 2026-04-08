@@ -70,6 +70,9 @@
             <h2>The Engineering Mission</h2>
             <p>VisuBeam was designed to solve the <span class="tech-highlight">"Cocktail Party Problem"</span>—extracting a clean voice signal from a specific speaker in a noisy, reverberant environment. Unlike traditional audio-only systems, VisuBeam leverages <strong>Cross-modal Fusion</strong>, using visual coordinates to guide precision spatial filtering.</p>
 
+            <img src="images/output_4ch_2.png" alt="Raw Multi-channel Input" class="full-width-img">
+            <p class="visual-label">Fig 1: Raw 4-channel input recording with extremely low SNR—the challenging starting point for the engine.</p>
+
             <div class="metrics-grid">
                 <div class="metric-box"><span class="metric-value">16kHz</span><span class="metric-label">Sample Rate (Standard)</span></div>
                 <div class="metric-box"><span class="metric-value">4 - 8</span><span class="metric-label">Microphone Channels</span></div>
@@ -80,10 +83,8 @@
             <h2>Phase 1: High-Throughput Ingest & Concurrency</h2>
             <div class="step-card">
                 <div class="step-num">1</div>
-                <h3>The Shared Circular Buffer</h3>
-                <p>To ensure zero-drop audio capture during heavy DSP loads, VisuBeam employs a <strong>Shared Circular Buffer</strong> architecture. This thread-safe producer-consumer model decouples the high-priority <code>AudioStreamPipeline</code> from downstream analysis.</p>
-                <img src="images/output_4ch_2.png" alt="Multi-channel Input Waveform" class="full-width-img">
-                <p class="visual-label">Fig 1: Raw 4-channel input recording from a circular microphone array.</p>
+                <h3>Asynchronous Shared Circular Buffer</h3>
+                <p>To ensure zero-drop audio capture during heavy DSP loads, VisuBeam employs a <strong>Shared Circular Buffer</strong> architecture. This thread-safe producer-consumer model decouples the high-priority <code>AudioStreamPipeline</code> from downstream analysis, ensuring that the raw, low-SNR multi-channel stream is ingested without loss, regardless of processing jitter.</p>
             </div>
 
             <h2>Phase 2: Spatial Intelligence & Noise Estimation</h2>
