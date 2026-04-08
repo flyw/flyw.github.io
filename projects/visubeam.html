@@ -212,32 +212,23 @@
             <!-- Phase 4 -->
             <div class="step-card">
                 <div class="step-num">4</div>
-                <h3>Phase 4: Neural Refinement & Delivery</h3>
-                <p>The final stage bridges the gap between DSP and modern deep learning, delivering a production-ready stream via high-speed network protocols.</p>
-
-                <div class="tech-subsection">
-                    <h4><i class="fas fa-brain"></i> DTLN Model Pooling</h4>
-                    <p>For non-linear noise suppression, the engine supports an optional <strong>Dual-Path RNN (DTLN)</strong> layer. To manage resources efficiently, I implemented a <strong>Model Pool</strong> that pre-loads weights and ensures state isolation across concurrent sessions.</p>
-                </div>
-
-                <div class="code-snippet">
-<span class="code-comment"># Accelerated Model Acquisition Logic</span>
-<span class="code-keyword">def</span> <span class="code-func">acquire_model</span>(self, session_id):
-    <span class="code-keyword">if</span> self.pool.has_available():
-        model = self.pool.pop()
-        <span class="code-keyword">return</span> model.bind(session_id)
-    <span class="code-keyword">return</span> self.load_on_demand()
-                </div>
+                <h3>Phase 4: Real-time Delivery & Protocol</h3>
+                <p>The final stage focuses on delivering the high-fidelity, spatially filtered audio to the client with minimal overhead, ensuring the lowest possible end-to-end latency.</p>
 
                 <div class="tech-subsection">
                     <h4><i class="fas fa-network-wired"></i> Binary Hybrid Protocol</h4>
-                    <p>Enhanced audio is delivered via <strong>WebSockets</strong> using a custom Binary Hybrid Protocol. It prepends frame-level metadata (Energy, Target Angle) to raw 16-bit PCM bytes, enabling real-time visualization on the client-side with minimal overhead.</p>
+                    <p>Enhanced audio is delivered via <strong>WebSockets</strong> using a custom Binary Hybrid Protocol. It prepends frame-level metadata (Energy, Target Angle) to raw 16-bit PCM bytes, enabling real-time visualization on the client-side with minimal serialization overhead.</p>
+                </div>
+
+                <div class="tech-subsection">
+                    <h4><i class="fas fa-plug"></i> Optional Neural Post-Processing</h4>
+                    <p>For scenarios requiring non-linear noise suppression, the engine supports a plug-and-play <strong>DTLN (Dual-Path RNN)</strong> layer. This is an optional stage that can be toggled via configuration to balance between absolute zero-latency and maximum noise suppression.</p>
                 </div>
             </div>
 
             <div class="architecture-note">
                 <h3>Summary of the Engineering Achievement</h3>
-                <p>VisuBeam successfully balances the computational complexity of frequency-domain DSP with the strict latency requirements of real-time communication. By implementing a modular pipeline of <strong>WPE → APM → MCRA → MVDR → DTLN</strong>, it provides a robust, production-grade solution for the next generation of voice-enabled hardware.</p>
+                <p>VisuBeam balances the computational complexity of frequency-domain DSP with the strict requirements of real-time communication. By implementing a modular pipeline of <strong>WPE → APM → MCRA → MVDR</strong>, it provides a robust, production-grade solution optimized for deterministic, low-latency voice interaction.</p>
             </div>
 
             <div style="text-align: center; margin-top: 80px; padding-bottom: 60px;">

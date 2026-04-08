@@ -102,7 +102,7 @@
                     <div class="breakthrough-item">
                         <span class="breakthrough-topic">SYSTEM ARCHITECTURE (VisuBeam)</span>
                         <h4>Zero-Latency Multi-modal Pipeline</h4>
-                        <p>Engineered a production-grade DSP stack that orchestrates WPE, APM, and MVDR algorithms in a non-blocking fan-out architecture. By implementing <strong>DTLN Model Pooling</strong> and a custom <strong>Binary Hybrid Protocol</strong>, the system achieves sub-10ms processing overhead for high-concurrency AI interaction.</p>
+                        <p>Engineered a production-grade DSP stack that orchestrates WPE, APM, and MVDR algorithms in a non-blocking fan-out architecture. By implementing <strong>Lock-free Shared Buffering</strong> and a custom <strong>Binary Hybrid Protocol</strong>, the system achieves sub-10ms processing overhead for deterministic real-time AI interaction.</p>
                     </div>
                     <div class="breakthrough-item">
                         <span class="breakthrough-topic">LLM OPTIMIZATION (TTS)</span>
@@ -126,7 +126,7 @@
                         <p class="project-desc">A high-performance real-time audio framework that fuses visual guidance with MVDR beamforming to "look and listen" with extreme spatial precision.</p>
                         <ul class="highlights">
                             <li><i class="fas fa-microchip"></i> <strong>Shared Circular Buffer</strong>: Implemented a thread-safe asynchronous buffer for zero-drop capture and multi-consumer real-time processing.</li>
-                            <li><i class="fas fa-layer-group"></i> <strong>DTLN Model Pooling</strong>: Pre-loaded neural model instances with state isolation, supporting high-concurrency enhancement without initialization latency.</li>
+                            <li><i class="fas fa-shield-alt"></i> <strong>AEC & Self-Noise Removal</strong>: Integrated WebRTC APM to strip out device playback (Echo Cancellation) and stabilize the signal before beamforming.</li>
                             <li><i class="fas fa-tachometer-alt"></i> <strong>Inertial Tracking</strong>: Robust spatial steering with 45°→70° smooth tracking and intelligent hold mechanism during brief signal gaps.</li>
                         </ul>
                         <div class="tech-stack">
