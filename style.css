@@ -198,11 +198,14 @@ nav a:hover {
     transition: var(--transition);
     position: relative;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 .project-card:hover {
     border-color: var(--primary);
     transform: translateY(-5px);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
 }
 
 .project-tag {
@@ -252,6 +255,29 @@ nav a:hover {
     border-radius: 40px;
     font-size: 0.8rem;
     color: var(--text-secondary);
+}
+
+.project-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: auto;
+}
+
+.project-actions .btn {
+    flex: 1;
+    text-align: center;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 15px;
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+.btn-sm {
+    padding: 8px 16px;
+    font-size: 0.85rem;
 }
 
 .link {
