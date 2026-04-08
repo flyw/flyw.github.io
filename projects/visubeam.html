@@ -4,108 +4,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VisuBeam: Cross-modal Audio Fusion Engine | Case Study by YUAN WANG (@flyw)</title>
-    <meta name="description" content="Detailed technical analysis of VisuBeam, a high-performance cross-modal audio engine combining Visual Tracking with MVDR Beamforming for precision voice extraction.">
+    <meta name="description" content="Technical deep-dive into VisuBeam: A high-performance real-time audio engine combining SRP-PHAT DOA and MVDR Beamforming.">
     <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
             --bg-case: #0b1121;
             --card-case: #161e31;
+            --accent-soft: rgba(0, 112, 243, 0.1);
         }
-        body {
-            background: var(--bg-case);
-        }
-        .case-study {
-            padding-top: 120px;
-            padding-bottom: 80px;
-        }
-        .case-header {
-            margin-bottom: 60px;
-        }
-        .case-header h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-        .case-tag {
-            display: inline-block;
-            padding: 5px 15px;
-            background: var(--accent);
-            color: var(--bg);
-            border-radius: 20px;
-            font-weight: 700;
-            font-size: 0.8rem;
-            margin-bottom: 1.5rem;
-        }
-        .architecture-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            margin: 40px 0;
-        }
-        .arch-card {
-            background: var(--card-case);
-            padding: 30px;
-            border-radius: 12px;
-            border-left: 4px solid var(--accent);
-        }
-        .arch-card h3 {
-            margin-bottom: 15px;
-            color: var(--accent);
-        }
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            margin: 40px 0;
-        }
-        .metric-box {
-            text-align: center;
-            background: rgba(0, 112, 243, 0.1);
-            padding: 20px;
-            border-radius: 10px;
-            border: 1px solid rgba(0, 112, 243, 0.2);
-        }
-        .metric-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--accent);
-            display: block;
-        }
-        .metric-label {
-            font-size: 0.9rem;
-            color: #888;
-        }
-        .case-content p {
-            line-height: 1.8;
-            margin-bottom: 1.5rem;
-            color: #ccc;
-        }
-        pre {
-            background: #1e1e1e;
-            padding: 20px;
-            border-radius: 8px;
-            overflow-x: auto;
-            border: 1px solid #333;
-            margin: 20px 0;
-        }
-        code {
-            color: #dcdcdc;
-            font-family: 'Fira Code', monospace;
-        }
-        .back-link {
-            margin-top: 40px;
-            display: inline-block;
-            color: var(--accent);
-            text-decoration: none;
-            font-weight: 600;
-        }
-        .back-link:hover {
-            text-decoration: underline;
-        }
+        body { background: var(--bg-case); }
+        .case-study { padding-top: 120px; padding-bottom: 80px; }
+        .case-header { margin-bottom: 60px; text-align: center; }
+        .case-header h1 { font-size: 3.5rem; margin-bottom: 1rem; background: linear-gradient(to right, #fff, var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .case-tag { display: inline-block; padding: 5px 15px; background: var(--primary); color: white; border-radius: 20px; font-weight: 700; font-size: 0.8rem; margin-bottom: 1.5rem; }
+        
+        .pipeline-flow { display: flex; flex-direction: column; gap: 40px; margin: 60px 0; }
+        .step-card { background: var(--card-case); padding: 40px; border-radius: 16px; border: 1px solid #222; position: relative; }
+        .step-num { position: absolute; top: -20px; left: 40px; background: var(--primary); width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: 800; font-size: 1.2rem; }
+        
+        .visual-comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin: 30px 0; }
+        .visual-item { text-align: center; }
+        .visual-item img { width: 100%; border-radius: 8px; border: 1px solid #333; margin-bottom: 10px; }
+        .visual-label { font-size: 0.85rem; color: #888; font-style: italic; }
+
+        .full-width-img { width: 100%; border-radius: 12px; border: 1px solid #333; margin: 30px 0; }
+        
+        .tech-highlight { color: var(--primary); font-weight: 700; }
+        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin: 40px 0; }
+        .metric-box { background: var(--accent-soft); padding: 25px; border-radius: 12px; border: 1px solid rgba(0, 112, 243, 0.2); text-align: center; }
+        .metric-value { font-size: 2.2rem; font-weight: 800; color: var(--primary); display: block; }
+        
+        .architecture-note { background: #111; padding: 30px; border-radius: 12px; border-left: 4px solid var(--primary); margin: 40px 0; }
+        
         @media (max-width: 768px) {
-            .architecture-grid { grid-template-columns: 1fr; }
-            .metrics-grid { grid-template-columns: 1fr; }
-            .case-header h1 { font-size: 2.2rem; }
+            .visual-comparison { grid-template-columns: 1fr; }
+            .case-header h1 { font-size: 2.5rem; }
         }
     </style>
 </head>
@@ -124,69 +58,86 @@
     <main class="container case-study">
         <header class="case-header">
             <span class="case-tag">AI / CROSS-MODAL FUSION</span>
-            <h1>VisuBeam: Precision Target Voice Extraction</h1>
-            <p class="subtitle">Solving the "Cocktail Party Problem" with Visual-Aided MVDR Beamforming.</p>
+            <h1>VisuBeam: The Anatomy of a High-Performance Audio Engine</h1>
+            <p class="subtitle">A deep dive into real-time multi-channel spatial filtering and target voice extraction.</p>
         </header>
 
         <section class="case-content">
-            <h2>The Challenge</h2>
-            <p>Traditional Direction of Arrival (DOA) algorithms like SRP-PHAT often struggle in high-reverberation environments or multi-speaker scenarios. When two speakers overlap spatially or temporally, audio-only systems can exhibit "glitches" or lock onto the wrong target. VisuBeam was engineered to bypass this limitation by fusing visual tracking metadata with advanced spatial filtering.</p>
-            
+            <h2>The Engineering Mission</h2>
+            <p>VisuBeam was designed to solve the <span class="tech-highlight">"Cocktail Party Problem"</span>—extracting a clean voice signal from a specific speaker in a noisy, reverberant environment. Unlike traditional audio-only systems, VisuBeam leverages <strong>Cross-modal Fusion</strong>, using visual coordinates to guide precision spatial filtering.</p>
+
             <div class="metrics-grid">
-                <div class="metric-box">
-                    <span class="metric-value">< 32ms</span>
-                    <span class="metric-label">Processing Latency</span>
-                </div>
-                <div class="metric-box">
-                    <span class="metric-value">4+ Ch</span>
-                    <span class="metric-label">Concurrent Mics</span>
-                </div>
-                <div class="metric-box">
-                    <span class="metric-value">0 Drop</span>
-                    <span class="metric-label">Shared Buffer Capture</span>
+                <div class="metric-box"><span class="metric-value">16kHz</span><span class="metric-label">Sample Rate (Standard)</span></div>
+                <div class="metric-box"><span class="metric-value">4 - 8</span><span class="metric-label">Microphone Channels</span></div>
+                <div class="metric-box"><span class="metric-value">&lt; 10ms</span><span class="metric-label">I/O Round-trip Latency</span></div>
+                <div class="metric-box"><span class="metric-value">SPEC-009</span><span class="metric-label">Buffer Architecture</span></div>
+            </div>
+
+            <h2>Phase 1: Zero-Drop Ingest & Concurrency</h2>
+            <div class="step-card">
+                <div class="step-num">1</div>
+                <h3>The Shared Circular Buffer</h3>
+                <p>To ensure zero-drop audio capture during heavy DSP loads, VisuBeam employs a <strong>Shared Circular Buffer</strong> architecture. This thread-safe producer-consumer model decouples the high-priority <code>AudioStreamPipeline</code> from downstream analysis.</p>
+                <img src="images/output_4ch_2.png" alt="Multi-channel Input Waveform" class="full-width-img">
+                <p class="visual-label">Fig 1: Raw 4-channel input recording from a circular microphone array.</p>
+            </div>
+
+            <h2>Phase 2: Spatial Intelligence (DOA)</h2>
+            <div class="step-card">
+                <div class="step-num">2</div>
+                <h3>SRP-PHAT Sound Source Localization</h3>
+                <p>The <code>DOAService</code> continuously polls the shared buffer to calculate the sound source direction. By implementing <strong>Steered Response Power with Phase Transform (SRP-PHAT)</strong>, the engine can track multiple speakers even before visual metadata is integrated.</p>
+                
+                <div class="visual-comparison">
+                    <div class="visual-item">
+                        <img src="images/srp_heatmap.png" alt="SRP Heatmap">
+                        <span class="visual-label">Spatial Heatmap (Power Distribution)</span>
+                    </div>
+                    <div class="visual-item">
+                        <img src="images/doa_plot.png" alt="DOA Tracking">
+                        <span class="visual-label">Real-time Angle Tracking (Degrees)</span>
+                    </div>
                 </div>
             </div>
 
-            <h2>Architecture: SPEC-009 Compliance</h2>
-            <p>At the heart of VisuBeam is a thread-safe <strong>Shared Circular Buffer</strong>. This design decouples the high-priority audio capture thread from the computationally intensive DSP and Neural Enhancement layers.</p>
-            
-            <div class="architecture-grid">
-                <div class="arch-card">
-                    <h3>Producer-Consumer Decoupling</h3>
-                    <p>The <strong>Shared Buffer</strong> ensures that raw audio frames are never dropped, even when deep learning models (DTLN) experience inference jitter. This is critical for maintaining phase consistency in beamforming.</p>
+            <h2>Phase 3: The Enhancement Stack (MVDR)</h2>
+            <div class="step-card">
+                <div class="step-num">3</div>
+                <h3>Beamforming & Spatial Filtering</h3>
+                <p>This is where the magic happens. The <code>EnhancementService</code> receives target coordinates (either from DOA or Visual Ingest) and builds a <strong>Minimum Variance Distortionless Response (MVDR)</strong> spatial filter. It preserves the target direction while mathematically minimizing energy from all other directions.</p>
+                
+                <div class="visual-comparison">
+                    <div class="visual-item">
+                        <img src="images/mvdr_output_90.png" alt="MVDR 90 deg">
+                        <span class="visual-label">MVDR Steering: Broadside (90°)</span>
+                    </div>
+                    <div class="visual-item">
+                        <img src="images/mvdr_output_55.png" alt="MVDR 55 deg">
+                        <span class="visual-label">MVDR Steering: Off-axis (55°)</span>
+                    </div>
                 </div>
-                <div class="arch-card">
-                    <h3>Multi-Consumer Fan-out</h3>
-                    <p>A single buffer can serve multiple "Enhancement Consumers" simultaneously. Each consumer tracks a different speaker (Person ID) with its own target angle and independent spatial filter.</p>
-                </div>
+                <p>The amplitude difference in the waveforms above demonstrates how the MVDR filter selectively suppresses interference based on the steering angle.</p>
             </div>
 
-            <h2>Key Engineering Breakthroughs</h2>
-            
-            <h3>1. Visual-Aided Steering</h3>
-            <p>Instead of relying purely on audio cues, VisuBeam accepts external visual coordinates via a REST API. This allows the <strong>MVDR (Minimum Variance Distortionless Response)</strong> beamformer to steer its sensitivity "beam" toward the speaker's exact physical location with millimeter precision.</p>
+            <div class="architecture-note">
+                <h3>Optional Plug-and-Play Neural Post-Processing</h3>
+                <p>While MVDR handles linear spatial filtering, non-linear noise (like babble or transient clicks) is suppressed using an optional <strong>DTLN (Dual-Path RNN)</strong> layer. VisuBeam uses a <strong>Model Pooling</strong> mechanism to manage these neural instances, ensuring state isolation for multiple concurrent users.</p>
+            </div>
 
-            <h3>2. DTLN Model Pooling</h3>
-            <p>To support high-concurrency environments, I implemented a <strong>Model Pool Manager</strong>. Neural models (Dual-Path RNN) are pre-loaded and managed in a pool, ensuring that new tracking sessions start instantly with zero initialization latency.</p>
+            <h2>Summary of the Pipeline</h2>
+            <p>1. <strong>WPE</strong>: Removes late reverberation to improve clarity.<br>
+               2. <strong>MCRA</strong>: Robustly tracks the noise floor for precise covariance estimation.<br>
+               3. <strong>MVDR</strong>: Performs the heavy lifting of spatial beamforming.<br>
+               4. <strong>Network Delivery</strong>: Delivers 16-bit PCM binary chunks via high-speed WebSockets.</p>
 
-            <pre><code># Model Pooling Logic snippet
-def acquire_model(self):
-    if self.pool:
-        return self.pool.pop()
-    elif len(self.active) < self.max_capacity:
-        return self.load_new_model()
-    else:
-        raise ResourceExhausted("Model pool is full")</code></pre>
+            <img src="images/denoised_output.png" alt="MCRA Denoised Result" class="full-width-img">
+            <p class="visual-label">Fig 2: Final output after MCRA and spatial filtering.</p>
 
-            <h3>3. Inertial Spatial Hold</h3>
-            <p>When the visual tracking temporarily loses the target (e.g., speaker turns away), VisuBeam employs an <strong>Inertial Hold Mechanism</strong>. It maintains the last known spatial beam for a configurable duration, preventing audio dropouts during brief signal gaps.</p>
-
-            <h2>Performance in Motion</h2>
-            <p>One of the most significant achievements is the system's ability to handle dynamic movement. During tests, the system demonstrated smooth tracking from <strong>45° to 70°</strong> without any audible "steps" or phase artifacts, maintaining crystal-clear人声 (vocal) isolation throughout the movement.</p>
-
-            <a href="https://github.com/flyw/VisuBeam" target="_blank" rel="noopener" class="btn primary">View Source on GitHub <i class="fab fa-github"></i></a>
-            <br>
-            <a href="../index.html#projects" class="back-link">← Back to Portfolio</a>
+            <div style="text-align: center; margin-top: 60px;">
+                <a href="https://github.com/flyw/VisuBeam" target="_blank" rel="noopener" class="btn primary">View Full Codebase on GitHub <i class="fab fa-github"></i></a>
+                <br>
+                <a href="../index.html#projects" class="back-link">← Back to Portfolio Home</a>
+            </div>
         </section>
     </main>
 
