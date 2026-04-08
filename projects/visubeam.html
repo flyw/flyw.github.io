@@ -17,7 +17,7 @@
         .case-study { padding-top: 120px; padding-bottom: 80px; }
         .case-header { margin-bottom: 60px; text-align: center; }
         .case-header h1 { font-size: 3.5rem; margin-bottom: 1rem; background: linear-gradient(to right, #fff, var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .project-main-logo { width: 120px; height: auto; margin-bottom: 20px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .project-main-logo { width: 240px; height: auto; margin-bottom: 30px; border-radius: 20px; box-shadow: 0 15px 45px rgba(0,0,0,0.6); }
         .case-tag { display: inline-block; padding: 5px 15px; background: var(--primary); color: white; border-radius: 20px; font-weight: 700; font-size: 0.8rem; margin-bottom: 1.5rem; }
         
         .case-content h2 { margin-top: 60px; margin-bottom: 30px; }
@@ -86,12 +86,15 @@
                 <p class="visual-label">Fig 1: Raw 4-channel input recording from a circular microphone array.</p>
             </div>
 
-            <h2>Phase 2: Spatial Intelligence (DOA)</h2>
+            <h2>Phase 2: Spatial Intelligence & Noise Estimation</h2>
             <div class="step-card">
                 <div class="step-num">2</div>
-                <h3>SRP-PHAT Sound Source Localization</h3>
-                <p>The <code>DOAService</code> continuously polls the shared buffer to calculate the sound source direction. By implementing <strong>Steered Response Power with Phase Transform (SRP-PHAT)</strong>, the engine can track multiple speakers even before visual metadata is integrated.</p>
+                <h3>SRP-PHAT Localization & MCRA Denoising</h3>
+                <p>The <code>DOAService</code> continuously polls the shared buffer to calculate the sound source direction. Simultaneously, <strong>Minima Controlled Recursive Averaging (MCRA)</strong> robustly tracks the noise floor, allowing the system to suppress background noise before the final spatial filtering stage.</p>
                 
+                <img src="images/denoised_output.png" alt="MCRA Denoised Result" class="full-width-img">
+                <p class="visual-label">Fig 2: Signal after MCRA noise suppression, ready for spatial beamforming.</p>
+
                 <div class="visual-comparison">
                     <div class="visual-item">
                         <img src="images/srp_heatmap.png" alt="SRP Heatmap">
@@ -104,43 +107,40 @@
                 </div>
             </div>
 
-            <h2>Phase 3: The Enhancement Stack (MVDR)</h2>
+            <h2>Phase 3: Precision Target Extraction (MVDR)</h2>
             <div class="step-card">
                 <div class="step-num">3</div>
-                <h3>Beamforming & Spatial Filtering</h3>
-                <p>This is where the magic happens. The <code>EnhancementService</code> receives target coordinates (either from DOA or Visual Ingest) and builds a <strong>Minimum Variance Distortionless Response (MVDR)</strong> spatial filter. It preserves the target direction while mathematically minimizing energy from all other directions.</p>
+                <h3>MVDR Target Beamforming</h3>
+                <p>This is the core extraction stage. Using target coordinates (from vision or DOA), the <code>EnhancementService</code> builds an <strong>MVDR (Minimum Variance Distortionless Response)</strong> spatial filter. It mathematically "steers" the array toward the speaker, preserving the target direction with zero distortion while actively canceling interference from other spatial sectors.</p>
                 
                 <div class="visual-comparison">
                     <div class="visual-item">
                         <img src="images/mvdr_output_90.png" alt="MVDR 90 deg">
-                        <span class="visual-label">MVDR Steering: Broadside (90°)</span>
+                        <span class="visual-label">Beamforming: Targeted at 90°</span>
                     </div>
                     <div class="visual-item">
                         <img src="images/mvdr_output_55.png" alt="MVDR 55 deg">
-                        <span class="visual-label">MVDR Steering: Off-axis (55°)</span>
+                        <span class="visual-label">Beamforming: Targeted at 55°</span>
                     </div>
                 </div>
-                <p>The amplitude difference in the waveforms above demonstrates how the MVDR filter selectively suppresses interference based on the steering angle.</p>
+                <p>The amplitude difference in the waveforms above demonstrates how the MVDR filter selectively preserves the signal from the targeted direction while suppressing spatial noise.</p>
             </div>
 
             <div class="architecture-note">
-                <h3>Optional Plug-and-Play Neural Post-Processing</h3>
-                <p>While MVDR handles linear spatial filtering, non-linear noise (like babble or transient clicks) is suppressed using an optional <strong>DTLN (Dual-Path RNN)</strong> layer. VisuBeam uses a <strong>Model Pooling</strong> mechanism to manage these neural instances, ensuring state isolation for multiple concurrent users.</p>
+                <h3>Optional Neural Post-Processing</h3>
+                <p>While MVDR handles linear spatial filtering, non-linear noise is suppressed using an optional <strong>DTLN (Dual-Path RNN)</strong> layer. VisuBeam uses a <strong>Model Pooling</strong> mechanism to manage these neural instances, ensuring state isolation for multiple concurrent users.</p>
             </div>
 
-            <h2>Summary of the Pipeline</h2>
+            <h2>Summary of the Processing Stack</h2>
             <p>1. <strong>WPE</strong>: Removes late reverberation to improve clarity.<br>
                2. <strong>MCRA</strong>: Robustly tracks the noise floor for precise covariance estimation.<br>
-               3. <strong>MVDR</strong>: Performs the heavy lifting of spatial beamforming.<br>
+               3. <strong>MVDR</strong>: Performs the primary spatial beamforming.<br>
                4. <strong>Network Delivery</strong>: Delivers 16-bit PCM binary chunks via high-speed WebSockets.</p>
 
-            <img src="images/denoised_output.png" alt="MCRA Denoised Result" class="full-width-img">
-            <p class="visual-label">Fig 2: Final output after MCRA and spatial filtering.</p>
-
-            <div style="text-align: center; margin-top: 60px;">
-                <a href="https://github.com/flyw/VisuBeam" target="_blank" rel="noopener" class="btn primary">View Full Codebase on GitHub <i class="fab fa-github"></i></a>
+            <div style="text-align: center; margin-top: 80px; padding-bottom: 40px;">
+                <a href="https://github.com/flyw/VisuBeam" target="_blank" rel="noopener" class="btn primary" style="display: inline-block; margin-bottom: 25px;">View Full Codebase on GitHub <i class="fab fa-github"></i></a>
                 <br>
-                <a href="../index.html#projects" class="back-link">← Back to Portfolio Home</a>
+                <a href="../index.html#projects" class="back-link" style="display: inline-block;">← Back to Portfolio Home</a>
             </div>
         </section>
     </main>
