@@ -239,17 +239,71 @@
             <!-- Phase 4 -->
             <div class="step-card">
                 <div class="step-num">4</div>
-                <h3>Phase 4: Real-time Delivery & Protocol</h3>
-                <p>The final stage focuses on delivering the high-fidelity, spatially filtered audio to the client with minimal overhead, ensuring the lowest possible end-to-end latency.</p>
+                <h3>Phase 4: Neural Refinement & Delivery</h3>
+                <p>The final stage bridges the gap between classical DSP and modern deep learning, delivering a production-ready audio stream via high-speed network protocols. After the MVDR beamformer has performed spatial filtering, residual non-stationary noise (keyboard clicks, HVAC rumble, distant chatter) may still remain.</p>
 
                 <div class="tech-subsection">
-                    <h4><i class="fas fa-network-wired"></i> Binary Hybrid Protocol</h4>
-                    <p>Enhanced audio is delivered via <strong>WebSockets</strong> using a custom Binary Hybrid Protocol. It prepends frame-level metadata (Energy, Target Angle) to raw 16-bit PCM bytes, enabling real-time visualization on the client-side with minimal serialization overhead.</p>
+                    <h4><i class="fas fa-brain"></i> DTLN Neural Enhancement</h4>
+                    <p>For non-linear noise suppression, the engine supports an optional <strong>Dual-Path RNN (DTLN)</strong> layer. DTLN operates in the frequency domain, using two LSTM blocks — one on the time-domain windowed input and one on the STFT magnitude spectrum — to predict a time-domain enhanced output. This architecture captures both temporal dynamics and spectral structure of speech.</p>
+                    <p>The DTLN processing operates on batches of frames. To avoid the <strong>"audio expansion bug"</strong> — phase discontinuity artifacts at frame boundaries from naive iFFT reconstruction — VisuBeam implements a <strong>Weighted Overlap-Add (WOLA)</strong> scheme:</p>
+                    <ol style="color: #aaa; font-size: 0.95rem; padding-left: 20px;">
+                        <li>iFFT each frequency-domain frame back to time domain.</li>
+                        <li>Multiply by a <strong>Hann synthesis window</strong> to shape the frame envelope.</li>
+                        <li>Accumulate into an output buffer at hop-length offsets (Overlap-Add).</li>
+                        <li>Accumulate the squared window into a separate weight buffer.</li>
+                        <li>Normalize: <code>output = ola_buffer / weight_buffer</code> for seamless, energy-correct reconstruction.</li>
+                    </ol>
+                    <p>This produces artifact-free audio with smooth transitions between frames, even under varying computational load.</p>
                 </div>
 
                 <div class="tech-subsection">
-                    <h4><i class="fas fa-plug"></i> Optional Neural Post-Processing</h4>
-                    <p>For scenarios requiring non-linear noise suppression, the engine supports a plug-and-play <strong>DTLN (Dual-Path RNN)</strong> layer. This is an optional stage that can be toggled via configuration to balance between absolute zero-latency and maximum noise suppression.</p>
+                    <h4><i class="fas fa-database"></i> Model Pooling Architecture</h4>
+                    <p>Neural network initialization is expensive — loading DTLN weights and allocating tensor memory can take hundreds of milliseconds. For a real-time service that must respond to incoming sessions instantly, this cold-start latency is unacceptable.</p>
+                    <p>VisuBeam implements a <strong>Model Pool</strong> that pre-loads DTLN instances at startup and manages them as a resource pool:</p>
+                    <ul style="color: #aaa; font-size: 0.95rem; padding-left: 20px;">
+                        <li><strong>acquire(session_id):</strong> Returns a model instance from the pool. If the pool is non-empty, an existing instance is popped. If under capacity, a new instance is created. If at maximum capacity, the call blocks until one becomes available.</li>
+                        <li><strong>release():</strong> Returns the model to the pool for reuse by subsequent sessions.</li>
+                    </ul>
+                    <p>This ensures both <strong>state isolation</strong> across concurrent user sessions and <strong>zero cold-start latency</strong> for active sessions. Each model instance is bound to a specific <code>person_id</code> and maintains its own LSTM hidden state throughout the session.</p>
+                </div>
+
+                <div class="code-snippet">
+<span class="code-comment"># Accelerated Model Acquisition Logic</span>
+<span class="code-keyword">def</span> <span class="code-func">acquire_model</span>(self, session_id):
+    <span class="code-keyword">if</span> self.pool.has_available():
+        model = self.pool.pop()
+        <span class="code-keyword">return</span> model.bind(session_id)
+    <span class="code-keyword">return</span> self.load_on_demand()
+                </div>
+
+                <div class="tech-subsection">
+                    <h4><i class="fas fa-network-wired"></i> Binary Hybrid WebSocket Protocol</h4>
+                    <p>Enhanced audio is delivered to clients via <strong>WebSockets</strong> using a custom <strong>Binary Hybrid Protocol</strong> that embeds metadata directly into the audio stream. This eliminates the need for a separate control channel and ensures frame-level synchronization between audio data and its associated metadata.</p>
+                    <p>The wire format is:</p>
+                    <div class="code-snippet">
+[Header Length (4B, Big Endian)] [JSON Header] [Raw PCM Bytes]
+                    </div>
+                    <p>The JSON header contains frame-level metadata including <strong>signal energy</strong>, <strong>target angle</strong>, and <strong>timestamp</strong>. The PCM payload is 16-bit signed, 16kHz, mono. This design enables real-time visualization on the client-side (e.g., displaying the active speaker angle on a UI dial) with minimal overhead and perfect audio-metadata alignment.</p>
+                </div>
+
+                <div class="tech-subsection">
+                    <h4><i class="fas fa-plug"></i> Network API Architecture</h4>
+                    <p>VisuBeam exposes a dual-plane network interface:</p>
+                    <ul style="color: #aaa; font-size: 0.95rem; padding-left: 20px;">
+                        <li><strong>Control Plane (REST API):</strong>
+                            <ul>
+                                <li><code>POST /api/v1/tracking/update</code> — accepts <code>List[TrackingItem]</code> to update target angles per person ID from visual tracking systems.</li>
+                                <li><code>POST /api/v1/tracking/leave</code> — notifies that a tracked target has left, releasing associated model pool resources.</li>
+                                <li><code>GET/POST /api/v1/system/device_id</code> — device identity management.</li>
+                            </ul>
+                        </li>
+                        <li><strong>Data Plane (WebSocket):</strong>
+                            <ul>
+                                <li><code>ws://&lt;host&gt;:8000/ws/tracking/angles</code> — streams detected angles and energy as JSON for monitoring dashboards.</li>
+                                <li><code>ws://&lt;host&gt;:8000/ws/audio/enhanced/{person_id}</code> — streams enhanced audio using the Binary Hybrid Protocol.</li>
+                            </ul>
+                        </li>
+                    </ul>
                 </div>
             </div>
 
