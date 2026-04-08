@@ -17,11 +17,13 @@
         .case-study { padding-top: 120px; padding-bottom: 80px; }
         .case-header { margin-bottom: 60px; text-align: center; }
         .case-header h1 { font-size: 3.5rem; margin-bottom: 1rem; background: linear-gradient(to right, #fff, var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .project-main-logo { width: 120px; height: auto; margin-bottom: 20px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .case-tag { display: inline-block; padding: 5px 15px; background: var(--primary); color: white; border-radius: 20px; font-weight: 700; font-size: 0.8rem; margin-bottom: 1.5rem; }
         
+        .case-content h2 { margin-top: 60px; margin-bottom: 30px; }
         .pipeline-flow { display: flex; flex-direction: column; gap: 40px; margin: 60px 0; }
-        .step-card { background: var(--card-case); padding: 40px; border-radius: 16px; border: 1px solid #222; position: relative; }
-        .step-num { position: absolute; top: -20px; left: 40px; background: var(--primary); width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: 800; font-size: 1.2rem; }
+        .step-card { background: var(--card-case); padding: 45px 40px 40px; border-radius: 16px; border: 1px solid #222; position: relative; margin-top: 20px; }
+        .step-num { position: absolute; top: -20px; left: 30px; background: var(--primary); width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: 800; font-size: 1.3rem; box-shadow: 0 4px 15px rgba(0, 112, 243, 0.4); }
         
         .visual-comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin: 30px 0; }
         .visual-item { text-align: center; }
@@ -57,6 +59,8 @@
 
     <main class="container case-study">
         <header class="case-header">
+            <img src="images/logo.png" alt="VisuBeam Logo" class="project-main-logo">
+            <br>
             <span class="case-tag">AI / CROSS-MODAL FUSION</span>
             <h1>VisuBeam: The Anatomy of a High-Performance Audio Engine</h1>
             <p class="subtitle">A deep dive into real-time multi-channel spatial filtering and target voice extraction.</p>
