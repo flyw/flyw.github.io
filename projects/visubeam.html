@@ -88,23 +88,23 @@
                 <p>To ensure zero-drop audio capture during heavy DSP loads, VisuBeam employs a <strong>Shared Circular Buffer</strong> architecture. This thread-safe producer-consumer model decouples the high-priority <code>AudioStreamPipeline</code> from downstream analysis, ensuring that the raw, low-SNR multi-channel stream is ingested without loss, regardless of processing jitter.</p>
             </div>
 
-            <h2>Phase 2: Spatial Intelligence & Noise Estimation</h2>
+            <h2>Phase 2: Audio Pre-processing & Spatial Intelligence</h2>
             <div class="step-card">
                 <div class="step-num">2</div>
-                <h3>SRP-PHAT Localization & MCRA Denoising</h3>
-                <p>The <code>DOAService</code> continuously polls the shared buffer to calculate the sound source direction. Simultaneously, <strong>Minima Controlled Recursive Averaging (MCRA)</strong> robustly tracks the noise floor, allowing the system to suppress background noise before the final spatial filtering stage.</p>
+                <h3>WPE, APM (AEC) & MCRA Denoising</h3>
+                <p>Before spatial filtering, the multi-channel stream undergoes a rigorous pre-processing chain. First, <strong>WPE (Weighted Prediction Error)</strong> removes late reverberation. Then, the <strong>WebRTC Audio Processing Module (APM)</strong> performs Acoustic Echo Cancellation (AEC) to strip out self-speaker playback. Finally, <strong>MCRA</strong> tracks the noise floor for dynamic suppression.</p>
                 
-                <img src="images/denoised_output.png" alt="MCRA Denoised Result" class="full-width-img">
-                <p class="visual-label">Fig 2: Signal after MCRA noise suppression, ready for spatial beamforming.</p>
+                <img src="images/denoised_output.png" alt="Pre-processed Output" class="full-width-img">
+                <p class="visual-label">Fig 2: Signal after WPE dereverberation and APM/MCRA noise suppression.</p>
 
                 <div class="visual-comparison">
                     <div class="visual-item">
                         <img src="images/srp_heatmap.png" alt="SRP Heatmap">
-                        <span class="visual-label">Spatial Heatmap (Power Distribution)</span>
+                        <span class="visual-label">Spatial Heatmap (SRP-PHAT)</span>
                     </div>
                     <div class="visual-item">
                         <img src="images/doa_plot.png" alt="DOA Tracking">
-                        <span class="visual-label">Real-time Angle Tracking (Degrees)</span>
+                        <span class="visual-label">Real-time Orientation Tracking</span>
                     </div>
                 </div>
             </div>
