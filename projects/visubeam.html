@@ -99,16 +99,32 @@
             <div class="step-card">
                 <div class="step-num">1</div>
                 <h3>Phase 1: Concurrency Foundation & Ingest</h3>
-                <p>Real-time DSP requires strict timing guarantees. VisuBeam implements a <strong>Producer-Consumer architecture</strong> designed to handle the high throughput of multi-channel 16-bit PCM data without blocking the I/O thread.</p>
-                
+                <p>Real-time DSP requires strict timing guarantees. VisuBeam implements a <strong>Producer-Consumer architecture</strong> designed to handle the high throughput of multi-channel 16-bit PCM data without blocking the I/O thread. At 16kHz with 4-8 channels, the system must sustain ~128KB/s of continuous data flow while maintaining sub-10ms end-to-end latency.</p>
+
                 <div class="tech-subsection">
                     <h4><i class="fas fa-microchip"></i> Asynchronous Shared Circular Buffer</h4>
-                    <p>Unlike standard buffers, VisuBeam uses a thread-safe circular implementation that allows the <code>AudioStreamPipeline</code> to ingest frames at the driver level while multiple consumers (DOA Service and Enhancement Service) read at their own pace.</p>
+                    <p>Unlike standard buffers, VisuBeam uses a thread-safe circular implementation that allows the <code>AudioStreamPipeline</code> to ingest frames at the driver level while multiple consumers (DOA Service and Enhancement Service) read at their own pace. The buffer is sized to hold <strong>200ms of audio data</strong>, providing sufficient headroom for transient scheduling delays without introducing perceptible latency.</p>
+                    <p>The core data structure is the <code>AudioChunk</code>, which encapsulates a unique ID, the multi-channel PCM matrix (<code>samples × channels</code>), and a high-precision timestamp. This design enables deterministic replay and precise synchronization across processing stages.</p>
+                </div>
+
+                <div class="code-snippet">
+<span class="code-comment"># Core data structure for frame-level processing</span>
+<span class="code-keyword">class</span> <span class="code-func">AudioChunk</span>:
+    id: <span class="code-func">str</span>           <span class="code-comment"># Unique identifier for traceability</span>
+    data: <span class="code-func">np.ndarray</span>  <span class="code-comment"># Shape: (samples, num_channels)</span>
+    num_channels: <span class="code-func">int</span>
+    timestamp: <span class="code-func">float</span>  <span class="code-comment"># High-precision capture time</span>
                 </div>
 
                 <div class="tech-subsection">
-                    <h4><i class="fas fa-project-diagram"></i> Fan-out Processing</h4>
-                    <p>The "Shared Buffer" design enables a <strong>Fan-out pattern</strong>: a single microphone array stream can be simultaneously processed by independent pipelines for Direction-of-Arrival (DOA) estimation and multiple voice enhancement instances (targeting different speakers).</p>
+                    <h4><i class="fas fa-project-diagram"></i> Fan-out Processing Pattern</h4>
+                    <p>The "Shared Buffer" design enables a <strong>Fan-out pattern</strong>: a single microphone array stream can be simultaneously processed by independent pipelines for Direction-of-Arrival (DOA) estimation and multiple voice enhancement instances (targeting different speakers). This is critical for conference room scenarios where the system must track and enhance <strong>multiple speakers concurrently</strong>.</p>
+                    <p>Each consumer maintains its own read pointer into the shared buffer, ensuring that slower processing stages (like the DTLN neural network) don't block faster ones (like DOA estimation). The producer operates at the highest thread priority to guarantee <strong>zero-drop capture</strong> even under heavy CPU load.</p>
+                </div>
+
+                <div class="tech-subsection">
+                    <h4><i class="fas fa-tachometer-alt"></i> System Configuration</h4>
+                    <p>The entire pipeline is governed by a <code>SystemConfiguration</code> dataclass that parameterizes sample rate, buffer duration, microphone geometry, and per-stage algorithm settings. This allows the same codebase to deploy on devices ranging from a 4-mic linear array on a conference speaker to an 8-mic circular array on a robotics platform.</p>
                 </div>
             </div>
 
@@ -116,14 +132,14 @@
             <div class="step-card">
                 <div class="step-num">2</div>
                 <h3>Phase 2: Acoustic Cleaning & Spatial Awareness</h3>
-                <p>Before spatial filtering can occur, the raw signal must be cleaned of "self-noise" and reverberation that would otherwise contaminate the covariance matrix estimation.</p>
+                <p>Before spatial filtering can occur, the raw signal must be cleaned of "self-noise" and reverberation that would otherwise contaminate the covariance matrix estimation. VisuBeam implements a <strong>three-stage pre-processing chain</strong> that operates entirely in the frequency domain using streaming overlap-add STFT/iSTFT with 32ms frame intervals.</p>
 
                 <div class="tech-subsection">
                     <h4><i class="fas fa-broom"></i> The Pre-processing Chain</h4>
                     <ul>
-                        <li><strong>WPE (Weighted Prediction Error):</strong> Removes late reverberation using a multi-channel linear prediction model, significantly improving speech intelligibility in echoic halls.</li>
-                        <li><strong>WebRTC APM (AEC):</strong> Integrated the WebRTC Audio Processing Module to perform <strong>Acoustic Echo Cancellation</strong>, stripping out speaker playback from the microphone feed.</li>
-                        <li><strong>MCRA Noise Reduction:</strong> Minima Controlled Recursive Averaging robustly tracks the non-stationary noise floor for dynamic suppression.</li>
+                        <li><strong>WPE (Weighted Prediction Error):</strong> Removes late reverberation using the NARA-WPE algorithm in a streaming fashion. By modeling the room's impulse response as a multi-channel linear prediction problem, WPE significantly improves speech intelligibility in echoic environments. The streaming implementation processes audio frame-by-frame using a sliding window to maintain real-time continuity without batch buffering.</li>
+                        <li><strong>WebRTC APM (AEC):</strong> Integrated the WebRTC Audio Processing Module to perform <strong>Acoustic Echo Cancellation</strong>, stripping out speaker playback from the microphone feed. This is essential for full-duplex conferencing where the system's own output would otherwise feedback into the input.</li>
+                        <li><strong>MCRA Noise Reduction:</strong> Minima Controlled Recursive Averaging robustly tracks the non-stationary noise floor for dynamic suppression. The MCRA estimator provides the noise covariance matrix that the MVDR beamformer relies on for interference suppression.</li>
                     </ul>
                 </div>
 
@@ -131,8 +147,26 @@
                 <p class="visual-label">Fig 2: Signal after WPE, APM, and MCRA processing (Optimized SNR).</p>
 
                 <div class="tech-subsection">
-                    <h4><i class="fas fa-compass"></i> Spatial Intelligence (SRP-PHAT)</h4>
-                    <p>The <code>DOAService</code> implements <strong>Steered Response Power with Phase Transform</strong>. It scans the acoustic space to find peaks in the GCC-PHAT power distribution, providing an autonomous fallback when visual coordinates are unavailable.</p>
+                    <h4><i class="fas fa-compass"></i> Spatial Intelligence: SRP-PHAT DOA Estimation</h4>
+                    <p>The <code>DOAService</code> implements <strong>Steered Response Power with Phase Transform</strong>, a robust algorithm for sound source localization. The process works as follows:</p>
+                    <ol style="color: #aaa; font-size: 0.95rem; padding-left: 20px;">
+                        <li>Compute the <strong>GCC-PHAT (Generalized Cross-Correlation with Phase Transform)</strong> matrix for all microphone pairs in the array.</li>
+                        <li>For each candidate angle (scanned at 1° resolution), calculate the theoretical TDOA (Time Difference of Arrival) using <strong>pre-computed lookup tables</strong> for performance.</li>
+                        <li>Accumulate energy across all mic pairs to build the SRP spatial spectrum.</li>
+                        <li>Peak detection on the spectrum yields DOA angles with confidence scores.</li>
+                    </ol>
+                    <p>This provides an <strong>autonomous fallback</strong> when visual coordinates are unavailable, ensuring the system remains functional even if the camera tracking feed is interrupted.</p>
+                </div>
+
+                <div class="tech-subsection">
+                    <h4><i class="fas fa-layer-group"></i> Sharp & Clean Fusion Algorithm</h4>
+                    <p>VisuBeam implements an advanced <strong>dual-spectrum SRP-PHAT fusion</strong> technique that simultaneously achieves high localization precision and high noise robustness — two goals that are typically in tension:</p>
+                    <ul style="color: #aaa; font-size: 0.95rem; padding-left: 20px;">
+                        <li><strong>"Sharp" spectrum:</strong> Computed with no time smoothing, providing precise, sharp localization peaks that accurately track rapid speaker movement.</li>
+                        <li><strong>"Clean" spectrum:</strong> Computed with strong time smoothing (window size 200 frames), which suppresses transient noise and retains only stable, persistent sources.</li>
+                        <li><strong>Fusion:</strong> <code>srp_fused = normalize(srp_sharp) × normalize(srp_clean)</code> — element-wise multiplication of the two normalized spectra yields a combined output that is both precise and stable.</li>
+                    </ul>
+                    <p>The algorithm operates with <code>fft_length: 1024</code> (64ms @ 16kHz), <code>scan_step_deg: 1</code>, and <code>interpolation_rate: 4</code> for sub-degree angular resolution.</p>
                 </div>
 
                 <div class="visual-comparison">
